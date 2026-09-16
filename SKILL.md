@@ -389,7 +389,7 @@ Selection rules:
 3. **Hermes Agent personal installs use the Hermes row above**, not the cross-agent root, and take no symlink.
 4. If the user explicitly asks for a host-private root (`~/.copilot/skills`, `~/.claude/skills`, `~/.config/agents/skills`, `~/.config/amp/skills`), honor it and skip the symlink.
 5. If the user explicitly asked for project-local output, use the project-local row for their host.
-6. If the choice requires knowing the host (project-local output, the Hermes personal root, or the Claude Code symlink) and you cannot identify it, ask: "Which agent are you running this in — Hermes Agent, GitHub Copilot CLI, Amp, Codex, or Claude Code?"
+6. If the choice requires knowing the host (project-local output, the Hermes personal root, the OpenClaw state root, or the Claude Code symlink) and you cannot identify it, ask: "Which agent are you running in — OpenClaw, Hermes Agent, GitHub Copilot CLI, Amp, Codex, or Claude Code?"
 7. For OpenClaw personal output, use `${OPENCLAW_STATE_DIR:-$HOME/.openclaw}/skills`. The shared `~/.agents/skills` root is a valid OpenClaw destination only when `OPENCLAW_STATE_DIR` is unset or equals the default `$HOME/.openclaw`; otherwise use the active state root or a project/extra directory.
 8. If the user explicitly asks for an OpenClaw-managed personal root, use the active state root and verify discovery with `openclaw skills list`.
 
