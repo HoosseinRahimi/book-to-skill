@@ -19,14 +19,32 @@ def _extract_probe_script():
 
 def _probe_env(home, state_dir=None):
     env = os.environ.copy()
-    env.update({"HOME": str(home)})
+    home_text = home.resolve().as_posix()
+    if os.name == "nt":
+        home_text = "/" + home_text[0].lower() + home_text[2:]
+    env.update({"HOME": home_text})
     if state_dir is None:
         env.pop("OPENCLAW_STATE_DIR", None)
     else:
-        env["OPENCLAW_STATE_DIR"] = str(state_dir)
+        state_text = state_dir.resolve().as_posix()
+        if os.name == "nt":
+            state_text = "/" + state_text[0].lower() + state_text[2:]
+        env["OPENCLAW_STATE_DIR"] = state_text
     env.pop("HERMES_AGENT", None)
     env.pop("HERMES_HOME", None)
     return env
+
+
+def _host_path(path_text):
+    path_text = path_text.strip()
+    if (
+        os.name == "nt"
+        and len(path_text) >= 3
+        and path_text[0] == "/"
+        and path_text[2] == "/"
+    ):
+        path_text = path_text[1].upper() + ":" + path_text[2:]
+    return Path(path_text)
 
 
 @pytest.mark.parametrize(
@@ -75,7 +93,7 @@ def test_openclaw_extractor_probe_discovers_supported_layouts(tmp_path, layout):
         capture_output=True,
         text=True,
     )
-    selected = Path(result.stdout.strip())
+    selected = _host_path(result.stdout)
     if not selected.is_absolute():
         selected = nested / selected
     assert selected.resolve() == extractor.resolve()
